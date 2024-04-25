@@ -11,6 +11,6 @@ public class Window extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
-        setBackground(bg);
+        setBackground(Color.RED);
     }
 }
