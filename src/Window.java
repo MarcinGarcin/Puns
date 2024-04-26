@@ -3,6 +3,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 public class Window extends JFrame {
     private Color grey = new Color(51, 51, 51);
@@ -15,6 +18,7 @@ public class Window extends JFrame {
     public Window() {
         setupWindow();
         setupGamePanel();
+        setupServerConnection(); // Call the function to setup server connection
     }
 
     public void setupWindow() {
@@ -39,24 +43,37 @@ public class Window extends JFrame {
         add(chatPanel);
     }
 
-    private class DrawPanel extends JPanel {
-        private Point lastPoint;
+    public void setupServerConnection() {
+        try {
+            Socket socket = new Socket("127.0.0.1", 8888);
 
-        public DrawPanel() {
-            addMouseListener(new MouseAdapter() {
+            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+
+            drawPanel.addMouseListener(new MouseAdapter() {
+                @Override
                 public void mousePressed(MouseEvent e) {
-                    lastPoint = e.getPoint();
+                    try {
+                        outputStream.writeObject(drawPanel);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
             });
 
-            addMouseMotionListener(new MouseMotionAdapter() {
+            drawPanel.addMouseMotionListener(new MouseMotionAdapter() {
+                @Override
                 public void mouseDragged(MouseEvent e) {
-                    Graphics g = getGraphics();
-                    g.setColor(Color.BLACK);
-                    g.drawLine(lastPoint.x, lastPoint.y, e.getX(), e.getY());
-                    lastPoint = e.getPoint();
+                    try {
+                        outputStream.writeObject(drawPanel);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
             });
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
 }
