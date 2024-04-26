@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -17,8 +15,8 @@ public class Window extends JFrame {
 
     public Window() {
         setupWindow();
-        setupGamePanel();
-        setupServerConnection(); // Call the function to setup server connection
+        setupLoginPanel();
+
     }
 
     public void setupWindow() {
@@ -29,7 +27,28 @@ public class Window extends JFrame {
         setVisible(true);
         getContentPane().setBackground(grey);
     }
+    public void setupLoginPanel(){
+        JPanel loginPanel = new JPanel();
+        loginPanel.setBackground(darkerGrey);
+        loginPanel.setLayout(null);
+        loginPanel.setBounds(width/2-width/6, height/2-height/4, width/3, height/2);
 
+        JButton joinGame = new JButton("join game");
+        joinGame.setBounds(0,0,100,50);
+        joinGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loginPanel.setVisible(false);
+                //setupServerConnection();
+                setupGamePanel();
+                repaint();
+                revalidate();
+            }
+        });
+        loginPanel.add(joinGame);
+        add(loginPanel);
+
+    }
     public void setupGamePanel() {
         JPanel chatPanel = new JPanel();
         chatPanel.setBounds(0, 0, width / 5, height);
