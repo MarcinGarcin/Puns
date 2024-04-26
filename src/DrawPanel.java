@@ -12,6 +12,7 @@ public class DrawPanel extends JPanel {
             public void mousePressed(MouseEvent e) {
                 lastPoint = e.getPoint();
             }
+
         });
 
         addMouseMotionListener(new MouseMotionAdapter() {
