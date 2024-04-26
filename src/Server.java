@@ -16,11 +16,9 @@ public class Server {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client connected: " + clientSocket.getInetAddress().getHostAddress());
 
-                // Create ObjectOutputStream to send data to this client
                 ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
                 outputStreams.add(outputStream);
 
-                // Start a new thread to handle client communication
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
                 new Thread(clientHandler).start();
             }
