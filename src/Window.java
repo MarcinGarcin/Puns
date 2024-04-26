@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 public class Window extends JFrame {
     private Color grey = new Color(51, 51, 51);
@@ -7,9 +10,11 @@ public class Window extends JFrame {
     private int width = 1280;
     private int height = 720;
 
+    private JPanel drawPanel;
+
     public Window() {
         setupWindow();
-        setupJoinGamePanel();
+        setupGamePanel();
     }
 
     public void setupWindow() {
@@ -21,12 +26,37 @@ public class Window extends JFrame {
         getContentPane().setBackground(grey);
     }
 
-    public void setupJoinGamePanel() {
-        JPanel joinGamePanel = new JPanel();
-        joinGamePanel.setBackground(Color.red);
-        joinGamePanel.setBounds(width/2 - width/6,height/2 - height/3, width/6,height/3);
+    public void setupGamePanel() {
+        JPanel chatPanel = new JPanel();
+        chatPanel.setBounds(0, 0, width / 5, height);
+        chatPanel.setBackground(darkerGrey);
 
+        drawPanel = new DrawPanel();
+        drawPanel.setBounds(width / 5 + 20, 20, width - width / 5 - 40, height - 140);
+        drawPanel.setBackground(Color.WHITE);
 
-        add(joinGamePanel);
+        add(drawPanel);
+        add(chatPanel);
+    }
+
+    private class DrawPanel extends JPanel {
+        private Point lastPoint;
+
+        public DrawPanel() {
+            addMouseListener(new MouseAdapter() {
+                public void mousePressed(MouseEvent e) {
+                    lastPoint = e.getPoint();
+                }
+            });
+
+            addMouseMotionListener(new MouseMotionAdapter() {
+                public void mouseDragged(MouseEvent e) {
+                    Graphics g = getGraphics();
+                    g.setColor(Color.BLACK);
+                    g.drawLine(lastPoint.x, lastPoint.y, e.getX(), e.getY());
+                    lastPoint = e.getPoint();
+                }
+            });
+        }
     }
 }
