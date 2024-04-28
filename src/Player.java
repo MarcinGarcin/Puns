@@ -1,24 +1,15 @@
-import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
-public class Player {
+public class Player implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String name;
-    private BufferedImage avatarImage;
-    private Boolean isDrawing = false;
-    private int score = 0;
 
-
-    public Player(String name){
+    public Player(String name) {
         this.name = name;
     }
-    public void changeDrawer(){
-        isDrawing = !isDrawing;
-    }
-    public BufferedImage getAvatar(){
-        return avatarImage;
-    }
-    public String getName(){
+
+    public String getName() {
         return name;
     }
-
-
 }
+

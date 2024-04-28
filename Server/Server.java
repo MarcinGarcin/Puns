@@ -11,23 +11,24 @@ public class Server {
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server started. Waiting for clients...");
 
-
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                if(clientSocket.getInputStream()!=null) {
-                    ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
-                    Player player = (Player) objectInputStream.readObject();
+                ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
+                Object object = objectInputStream.readObject();
 
+                if (object instanceof Player) {
+                    Player player = (Player) object;
                     System.out.println("Player connected: " + player.getName());
-
                     players.add(player);
+                } else {
+                    System.out.println("Received object is not a Player object.");
                 }
-
-                Thread thread = new Thread(new ClientHandler(clientSocket));
-                thread.start();
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void handleClient(Socket clientSocket) {
     }
 }

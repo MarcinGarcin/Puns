@@ -10,14 +10,13 @@ public class Window extends JFrame {
     private Color darkerGrey = new Color(40, 40, 40);
     private int width = 1280;
     private int height = 720;
-    private Player player;
+    public Player player;
 
     private JPanel drawPanel;
 
     public Window() {
         setupWindow();
         setupLoginPanel();
-
     }
 
     private void setupWindow() {
@@ -40,8 +39,8 @@ public class Window extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loginPanel.setVisible(false);
-                setupGamePanel();
                 createPlayer("Marcin");
+                setupGamePanel();
                 setupServerConnection();
                 repaint();
                 revalidate();
@@ -64,19 +63,22 @@ public class Window extends JFrame {
         add(chatPanel);
     }
     private void createPlayer(String userName){
-        Player player = new Player(userName);
+        player = new Player(userName);
     }
 
     private void setupServerConnection() {
+
         try {
-            Socket socket = new Socket("127.0.0.1",8888);
-
+            Socket socket = new Socket("127.0.0.1", 8888);
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-            outputStream.writeObject(player);
 
+            outputStream.writeObject(player);
+            outputStream.flush();
+
+            outputStream.close();
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }
