@@ -1,6 +1,7 @@
-/*import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 class ClientHandler implements Runnable {
@@ -13,25 +14,20 @@ class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
-            while (true) {
-                Object receivedObject = inputStream.readObject();
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-                for (ObjectOutputStream outputStream : outputStreams) {
-                    outputStream.writeObject(receivedObject);
-                    outputStream.flush();
-                }
+            String message;
+            while ((message = in.readLine()) != null) {
+                System.out.println("Received from client: " + message);
+                out.println("Server received: " + message);
             }
-        } catch (IOException | ClassNotFoundException e) {
+
+            in.close();
+            out.close();
+            clientSocket.close();
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                clientSocket.close();
-                outputStreams.remove(clientSocket.getOutputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 }
-*/

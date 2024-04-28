@@ -1,33 +1,32 @@
-/*import java.io.*;
+import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Server {
-    private static final int PORT = 8888;
-    private static List<ObjectOutputStream> outputStreams = new ArrayList<>();
-    private static List<Player> players;
-
     public static void main(String[] args) {
+        final int PORT = 8888;
+        ArrayList<Player> players = new ArrayList<>();
+
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
-            System.out.println("Server started. Listening on port " + PORT);
+            System.out.println("Server started. Waiting for clients...");
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("New client connected: " + clientSocket.getInetAddress().getHostAddress());
+                if(clientSocket.getInputStream()!=null) {
+                    ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
+                    Player player = (Player) objectInputStream.readObject();
 
-                ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-                outputStreams.add(outputStream);
+                    System.out.println("Player connected: " + player.getName());
 
-                ClientHandler clientHandler = new ClientHandler(clientSocket);
-                new Thread(clientHandler).start();
+                    players.add(player);
+                }
+
+                Thread thread = new Thread(new ClientHandler(clientSocket));
+                thread.start();
             }
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
-
-
 }
-*/

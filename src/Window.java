@@ -10,6 +10,7 @@ public class Window extends JFrame {
     private Color darkerGrey = new Color(40, 40, 40);
     private int width = 1280;
     private int height = 720;
+    private Player player;
 
     private JPanel drawPanel;
 
@@ -19,7 +20,7 @@ public class Window extends JFrame {
 
     }
 
-    public void setupWindow() {
+    private void setupWindow() {
         setSize(width, height);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,7 +28,7 @@ public class Window extends JFrame {
         setVisible(true);
         getContentPane().setBackground(grey);
     }
-    public void setupLoginPanel(){
+    private void setupLoginPanel(){
         JPanel loginPanel = new JPanel();
         loginPanel.setBackground(darkerGrey);
         loginPanel.setLayout(null);
@@ -39,8 +40,9 @@ public class Window extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loginPanel.setVisible(false);
-                //setupServerConnection();
                 setupGamePanel();
+                createPlayer("Marcin");
+                setupServerConnection();
                 repaint();
                 revalidate();
             }
@@ -49,7 +51,7 @@ public class Window extends JFrame {
         add(loginPanel);
 
     }
-    public void setupGamePanel() {
+    private void setupGamePanel() {
         JPanel chatPanel = new JPanel();
         chatPanel.setBounds(0, 0, width / 5, height);
         chatPanel.setBackground(darkerGrey);
@@ -61,34 +63,16 @@ public class Window extends JFrame {
         add(drawPanel);
         add(chatPanel);
     }
+    private void createPlayer(String userName){
+        Player player = new Player(userName);
+    }
 
-    public void setupServerConnection() {
+    private void setupServerConnection() {
         try {
-            Socket socket = new Socket("127.0.0.1", 8888);
+            Socket socket = new Socket("127.0.0.1",8888);
 
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-
-            drawPanel.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    try {
-                        outputStream.writeObject(drawPanel);
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            });
-
-            drawPanel.addMouseMotionListener(new MouseMotionAdapter() {
-                @Override
-                public void mouseDragged(MouseEvent e) {
-                    try {
-                        outputStream.writeObject(drawPanel);
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            });
+            outputStream.writeObject(player);
 
         } catch (IOException e) {
             e.printStackTrace();
