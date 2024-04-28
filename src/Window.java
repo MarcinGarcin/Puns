@@ -1,8 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class Window extends JFrame {
@@ -10,8 +9,10 @@ public class Window extends JFrame {
     private Color darkerGrey = new Color(40, 40, 40);
     private int width = 1280;
     private int height = 720;
-    public Player player;
-
+    private Player player;
+    private Socket socket;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
     private JPanel drawPanel;
 
     public Window() {
@@ -23,18 +24,19 @@ public class Window extends JFrame {
         setSize(width, height);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(null);
-        setVisible(true);
         getContentPane().setBackground(grey);
+        setResizable(false);
+        setVisible(true);
     }
-    private void setupLoginPanel(){
+
+    private void setupLoginPanel() {
         JPanel loginPanel = new JPanel();
         loginPanel.setBackground(darkerGrey);
         loginPanel.setLayout(null);
-        loginPanel.setBounds(width/2-width/6, height/2-height/4, width/3, height/2);
+        loginPanel.setBounds(width / 2 - width / 6, height / 2 - height / 4, width / 3, height / 2);
 
-        JButton joinGame = new JButton("join game");
-        joinGame.setBounds(0,0,100,50);
+        JButton joinGame = new JButton("Join Game");
+        joinGame.setBounds(0, 0, 100, 50);
         joinGame.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -42,43 +44,62 @@ public class Window extends JFrame {
                 createPlayer("Marcin");
                 setupGamePanel();
                 setupServerConnection();
-                repaint();
-                revalidate();
             }
         });
         loginPanel.add(joinGame);
         add(loginPanel);
-
     }
+
     private void setupGamePanel() {
         JPanel chatPanel = new JPanel();
         chatPanel.setBounds(0, 0, width / 5, height);
         chatPanel.setBackground(darkerGrey);
 
-        drawPanel = new DrawPanel();
+        drawPanel = new JPanel();
         drawPanel.setBounds(width / 5 + 20, 20, width - width / 5 - 40, height - 140);
         drawPanel.setBackground(Color.WHITE);
 
+        SlidePanel slidePanel = new SlidePanel();
+
+        add(slidePanel);
         add(drawPanel);
         add(chatPanel);
     }
-    private void createPlayer(String userName){
+
+    private void createPlayer(String userName) {
         player = new Player(userName);
     }
 
     private void setupServerConnection() {
-
         try {
-            Socket socket = new Socket("127.0.0.1", 8888);
-            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+            socket = new Socket("127.0.0.1", 8888);
+            out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(player);
+            out.flush();
 
-            outputStream.writeObject(player);
-            outputStream.flush();
-
-            outputStream.close();
-            socket.close();
+            in = new ObjectInputStream(socket.getInputStream());
+            gameHandler();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
+    private void gameHandler() {
+        new Thread(() -> {
+            try {
+                while (true) {
+                    Object object = in.readObject();
+                    Message message = (Message) object;
+                    System.out.println(message.getSender()+": "+message.getContent());
+                }
+            } catch (EOFException | OptionalDataException e) {
+                // These exceptions are thrown when there are no more objects to read
+                System.out.println("No more objects to read from the stream.");
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
 }

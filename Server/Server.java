@@ -3,23 +3,33 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class Server {
-    public static void main(String[] args) {
-        final int PORT = 8888;
+    private ServerSocket serverSocket;
+
+    public Server(int port) {
+        try {
+            serverSocket = new ServerSocket(port);
+            System.out.println("Server started. Waiting for clients...");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startServer() {
         ArrayList<Player> players = new ArrayList<>();
 
         try {
-            ServerSocket serverSocket = new ServerSocket(PORT);
-            System.out.println("Server started. Waiting for clients...");
-
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
-                Object object = objectInputStream.readObject();
+                ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
+
+                Object object = in.readObject();
 
                 if (object instanceof Player) {
                     Player player = (Player) object;
-                    System.out.println("Player connected: " + player.getName());
+                    System.out.println(player.getName() + " has joined the game.");
                     players.add(player);
+                    Thread thread = new Thread(new ClientHandler(clientSocket, player, in));
+                    thread.start();
                 } else {
                     System.out.println("Received object is not a Player object.");
                 }
@@ -29,6 +39,12 @@ public class Server {
         }
     }
 
-    private static void handleClient(Socket clientSocket) {
+    public static void main(String[] args) {
+        Server server = new Server(8888);
+        server.startServer();
     }
 }
+
+
+
+
