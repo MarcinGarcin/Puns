@@ -25,11 +25,6 @@ class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        for(Player p : players) {
-            System.out.println(p.getName());
-        }
-
-
     }
 }
 
