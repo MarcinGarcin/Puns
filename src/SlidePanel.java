@@ -58,6 +58,8 @@ class SlidePanel extends JPanel {
             playerLabel.setForeground(Color.WHITE);
             playerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
             add(playerLabel);
+            revalidate();
+            repaint();
         }
 
     }
