@@ -9,13 +9,12 @@ public class Window extends JFrame {
     private Color darkerGrey = new Color(40, 40, 40);
     private int width = 1280;
     private int height = 720;
+    private String ip;
     private Player player;
-    private Socket socket;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
     private JPanel drawPanel;
 
-    public Window() {
+    public Window(String ip) {
+        this.ip = ip;
         setupWindow();
         setupLoginPanel();
     }
@@ -43,7 +42,10 @@ public class Window extends JFrame {
                 loginPanel.setVisible(false);
                 createPlayer("Marcin");
                 setupGamePanel();
-                setupServerConnection();
+                new Thread(() -> {
+                    setupServerConnection();
+                    gameHandler();
+                }).start();
             }
         });
         loginPanel.add(joinGame);
@@ -71,35 +73,21 @@ public class Window extends JFrame {
     }
 
     private void setupServerConnection() {
-        try {
-            socket = new Socket("127.0.0.1", 8888);
-            out = new ObjectOutputStream(socket.getOutputStream());
-            out.writeObject(player);
-            out.flush();
+        ServerConnection.getInstance().connect(ip, 8888, player);
+    }
 
-            in = new ObjectInputStream(socket.getInputStream());
-            gameHandler();
-        } catch (IOException e) {
+    private void gameHandler() {
+        try {
+            ObjectInputStream in = ServerConnection.getInstance().getInputStream();
+            while (true) {
+                Object object = in.readObject();
+                Message message = (Message) object;
+                System.out.println(message.getSender() + ": " + message.getContent());
+            }
+        } catch (EOFException | OptionalDataException e) {
+            System.out.println("No more objects to read from the stream.");
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
-
-
-    private void gameHandler() {
-        new Thread(() -> {
-            try {
-                while (true) {
-                    Object object = in.readObject();
-                    Message message = (Message) object;
-                    System.out.println(message.getSender()+": "+message.getContent());
-                }
-            } catch (EOFException | OptionalDataException e) {
-                // These exceptions are thrown when there are no more objects to read
-                System.out.println("No more objects to read from the stream.");
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
 }

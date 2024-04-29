@@ -27,8 +27,11 @@ public class Server {
                 if (object instanceof Player) {
                     Player player = (Player) object;
                     System.out.println(player.getName() + " has joined the game.");
-                    players.add(player);
-                    Thread thread = new Thread(new ClientHandler(clientSocket, player, in));
+
+                    synchronized (players) {
+                        players.add(player);
+                    }
+                    Thread thread = new Thread(new ClientHandler(clientSocket, player, players));
                     thread.start();
                 } else {
                     System.out.println("Received object is not a Player object.");
@@ -38,6 +41,7 @@ public class Server {
             e.printStackTrace();
         }
     }
+
 
     public static void main(String[] args) {
         Server server = new Server(8888);
