@@ -51,9 +51,10 @@ class SlidePanel extends JPanel {
             }
         });
     }
-    public void updatePlayerLabel(ArrayList<String> playerAndPoints){
+    public void updatePlayerLabel(ArrayList<Player> playerAndPoints){
         for (int i = 0; i < playerAndPoints.size(); i++) {
-            JLabel playerLabel = new JLabel(playerAndPoints.get(i));
+            Player player = playerAndPoints.get(i);
+            JLabel playerLabel = new JLabel(i+"."+player.getName()+":   "+player.getScore());
             playerLabel.setForeground(Color.WHITE);
             playerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
             add(playerLabel);

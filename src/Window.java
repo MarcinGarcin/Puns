@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Window extends JFrame {
     private Color grey = new Color(51, 51, 51);
@@ -12,6 +13,7 @@ public class Window extends JFrame {
     private String ip;
     private Player player;
     private JPanel drawPanel;
+    private SlidePanel slidePanel;
 
     public Window(String ip) {
         this.ip = ip;
@@ -61,7 +63,7 @@ public class Window extends JFrame {
         drawPanel.setBounds(width / 5 + 20, 20, width - width / 5 - 40, height - 140);
         drawPanel.setBackground(Color.WHITE);
 
-        SlidePanel slidePanel = new SlidePanel();
+        slidePanel = new SlidePanel();
 
         add(slidePanel);
         add(drawPanel);
@@ -81,8 +83,10 @@ public class Window extends JFrame {
             ObjectInputStream in = ServerConnection.getInstance().getInputStream();
             while (true) {
                 Object object = in.readObject();
-                Message message = (Message) object;
-                System.out.println(message.getSender() + ": " + message.getContent());
+                if(object instanceof ArrayList<?>) {
+                    ArrayList<Player> players = (ArrayList<Player>) object;
+                    slidePanel.updatePlayerLabel(players);
+                }
             }
         } catch (EOFException | OptionalDataException e) {
             System.out.println("No more objects to read from the stream.");

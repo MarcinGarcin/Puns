@@ -1,16 +1,18 @@
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 
 
 public class Server {
     private ServerSocket serverSocket;
+    private ArrayList<Player> players = new ArrayList<Player>();
 
 
-    public void start(int port) throws IOException {
+
+    public void start(int port) throws IOException, ClassNotFoundException {
         serverSocket = new ServerSocket(port);
         while (true){
-            new ClientHandler(serverSocket.accept()).start();
-            System.out.println("new client connected");
+            new ClientHandler(serverSocket.accept(),players).start();
         }
 
     }
@@ -19,7 +21,7 @@ public class Server {
         serverSocket.close();
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         Server server = new Server();
         server.start(8888);
     }
