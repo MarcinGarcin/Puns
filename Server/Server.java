@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,8 +16,11 @@ public class Server {
         serverSocket = new ServerSocket(port);
         System.out.println("Server started on port " + port);
         new Timer(1000, new ActionListener() {
+
             @Override
-            n
+            public void actionPerformed(ActionEvent e) {
+
+            }
         })
 
     }
