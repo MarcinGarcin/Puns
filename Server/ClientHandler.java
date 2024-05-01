@@ -10,38 +10,42 @@ public class ClientHandler extends Thread {
     private ObjectInputStream in;
     private ArrayList<Player> players;
 
-    public ClientHandler(Socket socket, ArrayList<Player> players) throws IOException, ClassNotFoundException {
+    public ClientHandler(Socket socket, ArrayList<Player> players) throws IOException {
         this.clientSocket = socket;
         this.players = players;
-
+        out = new ObjectOutputStream(clientSocket.getOutputStream());
+        in = new ObjectInputStream(clientSocket.getInputStream());
+        sendUpdatedPlayerList();
     }
 
     public void run() {
         try {
-            in = new ObjectInputStream(clientSocket.getInputStream());
-            out = new ObjectOutputStream(clientSocket.getOutputStream());
             Object object = in.readObject();
-            if(object instanceof Player) {
+            if (object instanceof Player) {
                 Player player = (Player) object;
-                System.out.println("Client"+ player.getName()+" connected");
-                players.add(player);
+                System.out.println("Client " + player.getName() + " connected");
+                synchronized (players) {
+                    players.add(player);
+                }
+                sendUpdatedPlayerList();
             }
-            if(players.size()>0){
-                out.writeObject(players);
-            }
-
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+        } finally {
+            try {
+                in.close();
+                out.close();
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
 
-
-        try {
-            in.close();
-            out.close();
-            clientSocket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private void sendUpdatedPlayerList() throws IOException {
+        synchronized (players) {
+            out.writeObject(players);
+            out.reset();
         }
-
     }
 }
