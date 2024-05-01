@@ -12,7 +12,7 @@ public class Window extends JFrame {
     private int height = 720;
     private String ip;
     private Player player;
-    private JPanel drawPanel;
+    private DrawPanel drawPanel;
     private SlidePanel slidePanel;
 
     public Window(String ip) {
@@ -48,6 +48,7 @@ public class Window extends JFrame {
                     setupServerConnection();
                     gameHandler();
                 }).start();
+
             }
         });
         loginPanel.add(joinGame);
@@ -59,7 +60,7 @@ public class Window extends JFrame {
         chatPanel.setBounds(0, 0, width / 5, height);
         chatPanel.setBackground(darkerGrey);
 
-        drawPanel = new JPanel();
+        drawPanel = new DrawPanel();
         drawPanel.setBounds(width / 5 + 20, 20, width - width / 5 - 40, height - 140);
         drawPanel.setBackground(Color.WHITE);
 
@@ -84,12 +85,13 @@ public class Window extends JFrame {
             while (true) {
                 Object object = in.readObject();
                 if(object instanceof ArrayList<?>) {
+                    System.out.println("mam obiekt");
                     ArrayList<Player> players = (ArrayList<Player>) object;
                     slidePanel.updatePlayerLabel(players);
                 }
             }
         } catch (EOFException | OptionalDataException e) {
-            System.out.println("No more objects to read from the stream.");
+            System.out.println("");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
