@@ -14,6 +14,7 @@ public class Window extends JFrame {
     private Player player;
     private DrawPanel drawPanel;
     private SlidePanel slidePanel;
+    private int port = 8888;
 
     public Window(String ip) {
         this.ip = ip;
@@ -76,7 +77,7 @@ public class Window extends JFrame {
     }
 
     private void setupServerConnection() {
-        ServerConnection.getInstance().connect(ip, 8888, player);
+        ServerConnection.getInstance().connect(ip, port, player);
     }
 
     private void gameHandler() {
