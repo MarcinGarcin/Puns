@@ -42,8 +42,13 @@ public class Window extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 loginPanel.setVisible(false);
                 setupGamePanel();
-                GameHandler gH = new GameHandler(ip);
-                new Thread(gH).start();
+                try {
+                    new GameHandler(ip,slidePanel);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 

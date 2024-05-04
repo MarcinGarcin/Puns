@@ -2,50 +2,40 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.List;
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private Player player;
+    private List<Player> playerList;
+    private Server server;
 
-    public ClientHandler(Socket socket) throws IOException, IOException {
+    public ClientHandler(Socket socket, Server server, List<Player> playerList) throws IOException {
         this.clientSocket = socket;
+        this.playerList = playerList;
+        this.server = server;
         out = new ObjectOutputStream(clientSocket.getOutputStream());
         in = new ObjectInputStream(clientSocket.getInputStream());
     }
 
+    @Override
     public void run() {
         try {
-            Object object = in.readObject();
-            if (object instanceof Player) {
-                player = (Player) object;
-                System.out.println(player.getName()+" connected");
+            while (true) {
+                Object obj = in.readObject();
+                if (obj instanceof Player) {
+                    Player player = (Player) obj;
+                    server.addPlayer(player);
+                }
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                in.close();
-                out.close();
-                clientSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
-    public void sendPlayerList(ArrayList<Player> players) throws IOException {
-        out.flush();
+    public void sendPlayerList(List<Player> players) throws IOException {
         out.writeObject(players);
         out.flush();
-    }
-    public Player getPlayer(){
-        return player;
-    }
-
-    public Socket getSocket() {
-        return clientSocket;
     }
 }

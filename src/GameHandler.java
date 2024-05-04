@@ -1,43 +1,38 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
-public class GameHandler implements Runnable {
+public class GameHandler{
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private Socket socket;
     private Player player;
     private String ip;
+    private Object object;
+    private SlidePanel slidePanel;
 
-    public GameHandler(String ip) {
+    public GameHandler(String ip, SlidePanel slidePanel) throws IOException, ClassNotFoundException {
         this.ip = ip;
-    }
-
-
-
-    @Override
-    public void run() {
+        this.slidePanel = slidePanel;
         createPlayer();
         setupServerConnection();
         sendJoiningPing();
+        new Thread(this::listenForArrayList).start();
     }
+
+
+
     private void setupServerConnection() {
         try {
-            socket = new Socket(ip, 32768);
+            socket = new Socket(ip, 12345);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
             System.err.println("Failed to connect to the server: " + e.getMessage());
-        } finally {
-            if (socket != null && !socket.isClosed()) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    System.err.println("Failed to close the socket: " + e.getMessage());
-                }
-            }
-            // Close the input/output streams as well
+            e.printStackTrace();
         }
     }
+
     private void createPlayer(){
         player = new Player("Marcin");
     }
@@ -48,4 +43,30 @@ public class GameHandler implements Runnable {
             throw new RuntimeException(e);
         }
     }
+    private void listenForArrayList() {
+        try {
+            while (true) {
+                Object object = in.readObject();
+                if (object instanceof ArrayList<?>) {
+                    ArrayList<Player> list = (ArrayList<Player>) object;
+                    for (Player p : list) {
+                    }
+                    slidePanel.updatePlayerLabel(list);
+                }
+            }
+        } catch (EOFException e) {
+            System.out.println("End of stream reached");
+            new Server();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }

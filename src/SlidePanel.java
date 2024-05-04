@@ -54,6 +54,7 @@ class SlidePanel extends JPanel {
     public void updatePlayerLabel(ArrayList<Player> playerAndPoints){
         this.removeAll();
         for (int i = 0; i < playerAndPoints.size(); i++) {
+            System.out.println(playerAndPoints);
             Player player = playerAndPoints.get(i);
             JLabel playerLabel = new JLabel(i+"."+player.getName()+":   "+player.getScore());
             playerLabel.setForeground(Color.WHITE);
