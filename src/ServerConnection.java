@@ -9,14 +9,8 @@ public class ServerConnection {
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
-    private ServerConnection() {
-    }
-
-    public static synchronized ServerConnection getInstance() {
-        if (instance == null) {
-            instance = new ServerConnection();
-        }
-        return instance;
+    public ServerConnection(String ip, int port, Player player) {
+        connect(ip,port,player);
     }
 
     public void connect(String ip, int port, Player player) {

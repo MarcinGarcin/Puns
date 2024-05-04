@@ -8,13 +8,14 @@ import java.util.ArrayList;
 public class Window extends JFrame {
     private Color grey = new Color(51, 51, 51);
     private Color darkerGrey = new Color(40, 40, 40);
-    private int width = 1280;
-    private int height = 720;
     private String ip;
     private Player player;
     private DrawPanel drawPanel;
     private SlidePanel slidePanel;
-    private int port = 8888;
+    private ServerConnection servCon;
+    private int port = 32768;
+    private int width = 1280;
+    private int height = 720;
 
     public Window(String ip) {
         this.ip = ip;
@@ -45,13 +46,13 @@ public class Window extends JFrame {
                 loginPanel.setVisible(false);
                 createPlayer("Marcin");
                 setupGamePanel();
-                new Thread(() -> {
-                    setupServerConnection();
-                    gameHandler();
-                }).start();
 
+                setupServerConnection();
+                GameHandler gameHandler = new GameHandler(servCon.getInputStream(),servCon.getOutputStream(), slidePanel,player);
+                new Thread(gameHandler).start();
             }
         });
+
         loginPanel.add(joinGame);
         add(loginPanel);
     }
@@ -77,24 +78,7 @@ public class Window extends JFrame {
     }
 
     private void setupServerConnection() {
-        ServerConnection.getInstance().connect(ip, port, player);
+        servCon = new ServerConnection(ip, port, player);
     }
 
-    private void gameHandler() {
-        try {
-            ObjectInputStream in = ServerConnection.getInstance().getInputStream();
-            while (true) {
-                Object object = in.readObject();
-                if(object instanceof ArrayList<?>) {
-                    System.out.println("mam obiekt");
-                    ArrayList<Player> players = (ArrayList<Player>) object;
-                    slidePanel.updatePlayerLabel(players);
-                }
-            }
-        } catch (EOFException | OptionalDataException e) {
-            System.out.println("");
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 }

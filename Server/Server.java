@@ -6,23 +6,43 @@ public class Server {
     private ServerSocket serverSocket;
     private ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
     private ArrayList<Player> players = new ArrayList<Player>();
+    private ClientHandler handler;
 
     public void start(int port) {
+        try {
+            serverSocket = new ServerSocket(port);
+            System.out.println("Server started on port " + port);
+            while (!serverSocket.isClosed()) {
+                try {
+                    handler = new ClientHandler(serverSocket.accept());
+                    handler.run();
 
-        while (true) {
+                    clients.add(handler);
+                    players.add(handler.getPlayer());
+                    for(ClientHandler c : clients) {
+                        c.sendUpdatedPlayerList(players);
+                    }
+
+
+                } catch (IOException e) {
+                    System.out.println("Error accepting client: " + e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error starting server: " + e.getMessage());
+        } finally {
             try {
-                serverSocket = new ServerSocket(port);
-                System.out.println("client connected");
-                System.out.println("Server started on port " + port);
-                clients.add(new ClientHandler(serverSocket.accept(), players));
+                if (serverSocket != null && !serverSocket.isClosed()) {
+                    serverSocket.close();
+                }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.out.println("Error closing server: " + e.getMessage());
             }
         }
     }
 
     public static void main(String[] args) {
         Server server = new Server();
-        server.start(8888);
+        server.start(32768);
     }
 }
