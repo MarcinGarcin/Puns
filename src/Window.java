@@ -8,14 +8,11 @@ import java.util.ArrayList;
 public class Window extends JFrame {
     private Color grey = new Color(51, 51, 51);
     private Color darkerGrey = new Color(40, 40, 40);
-    private String ip;
-    private Player player;
     private DrawPanel drawPanel;
     private SlidePanel slidePanel;
-    private ServerConnection servCon;
-    private int port = 32768;
     private int width = 1280;
     private int height = 720;
+    private String ip ;
 
     public Window(String ip) {
         this.ip = ip;
@@ -44,12 +41,9 @@ public class Window extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loginPanel.setVisible(false);
-                createPlayer("Marcin");
                 setupGamePanel();
-
-                setupServerConnection();
-                GameHandler gameHandler = new GameHandler(servCon.getInputStream(),servCon.getOutputStream(), slidePanel,player);
-                new Thread(gameHandler).start();
+                GameHandler gH = new GameHandler(ip);
+                new Thread(gH).start();
             }
         });
 
@@ -72,13 +66,4 @@ public class Window extends JFrame {
         add(drawPanel);
         add(chatPanel);
     }
-
-    private void createPlayer(String userName) {
-        player = new Player(userName);
-    }
-
-    private void setupServerConnection() {
-        servCon = new ServerConnection(ip, port, player);
-    }
-
 }

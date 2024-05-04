@@ -8,7 +8,7 @@ public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    public Player player;
+    private Player player;
 
     public ClientHandler(Socket socket) throws IOException, IOException {
         this.clientSocket = socket;
@@ -21,7 +21,7 @@ public class ClientHandler implements Runnable {
             Object object = in.readObject();
             if (object instanceof Player) {
                 player = (Player) object;
-
+                System.out.println(player.getName()+" connected");
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -36,13 +36,16 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public void sendUpdatedPlayerList(ArrayList<Player> players) throws IOException {
+    public void sendPlayerList(ArrayList<Player> players) throws IOException {
+        out.flush();
         out.writeObject(players);
-        out.reset();
-
+        out.flush();
     }
     public Player getPlayer(){
         return player;
     }
 
+    public Socket getSocket() {
+        return clientSocket;
+    }
 }

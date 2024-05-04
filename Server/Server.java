@@ -1,48 +1,50 @@
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class Server {
-    private ServerSocket serverSocket;
-    private ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
-    private ArrayList<Player> players = new ArrayList<Player>();
-    private ClientHandler handler;
+public class Server implements Runnable {
+    private ServerSocket server;
+    private ArrayList<ClientHandler> clients = new ArrayList<>();
+    private ArrayList<Player> players = new ArrayList<>();
+    private ExecutorService pool;
+    private int port = 32768;
 
-    public void start(int port) {
+    @Override
+    public void run() {
         try {
-            serverSocket = new ServerSocket(port);
+            server = new ServerSocket(port);
+            pool = Executors.newCachedThreadPool();
             System.out.println("Server started on port " + port);
-            while (!serverSocket.isClosed()) {
-                try {
-                    handler = new ClientHandler(serverSocket.accept());
-                    handler.run();
+            while (true) {
+                Socket client = server.accept();
+                ClientHandler handler = new ClientHandler(client);
+                clients.add(handler);
+                pool.execute(handler);
+                players.add(handler.getPlayer());
 
-                    clients.add(handler);
-                    players.add(handler.getPlayer());
-                    for(ClientHandler c : clients) {
-                        c.sendUpdatedPlayerList(players);
-                    }
-
-
-                } catch (IOException e) {
-                    System.out.println("Error accepting client: " + e.getMessage());
-                }
+                broadcastPlayerList();
             }
         } catch (IOException e) {
-            System.out.println("Error starting server: " + e.getMessage());
-        } finally {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void broadcastPlayerList() {
+        for (ClientHandler client : clients) {
+            System.out.println("wyslano");
             try {
-                if (serverSocket != null && !serverSocket.isClosed()) {
-                    serverSocket.close();
-                }
+                client.sendPlayerList(players);
             } catch (IOException e) {
-                System.out.println("Error closing server: " + e.getMessage());
+                throw new RuntimeException(e);
             }
         }
     }
 
     public static void main(String[] args) {
         Server server = new Server();
-        server.start(32768);
+        server.run();
     }
 }
