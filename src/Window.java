@@ -2,8 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.Socket;
-import java.util.ArrayList;
 
 public class Window extends JFrame {
     private Color grey = new Color(51, 51, 51);
@@ -13,6 +11,9 @@ public class Window extends JFrame {
     private int width = 1280;
     private int height = 720;
     private String ip ;
+    private ChatPanel chatPanel;
+    private JPanel gamePanel;
+    private GameHandler gameHandler;
 
     public Window(String ip) {
         this.ip = ip;
@@ -41,9 +42,8 @@ public class Window extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loginPanel.setVisible(false);
-                setupGamePanel();
                 try {
-                    new GameHandler(ip,slidePanel);
+                    startGame();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 } catch (ClassNotFoundException ex) {
@@ -56,19 +56,29 @@ public class Window extends JFrame {
         add(loginPanel);
     }
 
-    private void setupGamePanel() {
-        JPanel chatPanel = new JPanel();
-        chatPanel.setBounds(0, 0, width / 5, height);
-        chatPanel.setBackground(darkerGrey);
+    private void startGame() throws IOException, ClassNotFoundException {
+        gamePanel = new JPanel();
+        gamePanel.setBounds(0,0,width,height);
+        gamePanel.setBackground(darkerGrey);
+        gamePanel.setLayout(null);
+
+        slidePanel = new SlidePanel();
+
+        gameHandler = new GameHandler(ip,slidePanel);
+
+        chatPanel = new ChatPanel(width / 5,height-50, gameHandler);
+        chatPanel.setBackground(grey);
+        chatPanel.setLayout(null);
+
 
         drawPanel = new DrawPanel();
         drawPanel.setBounds(width / 5 + 20, 20, width - width / 5 - 40, height - 140);
         drawPanel.setBackground(Color.WHITE);
 
-        slidePanel = new SlidePanel();
+        gamePanel.add(slidePanel);
+        gamePanel.add(chatPanel);
+        gamePanel.add(drawPanel);
+        add(gamePanel);
 
-        add(slidePanel);
-        add(drawPanel);
-        add(chatPanel);
     }
 }

@@ -17,11 +17,8 @@ public class GameHandler{
         createPlayer();
         setupServerConnection();
         sendJoiningPing();
-        new Thread(this::listenForArrayList).start();
+        new Thread(this::listenForPacket).start();
     }
-
-
-
     private void setupServerConnection() {
         try {
             socket = new Socket(ip, 12345);
@@ -43,14 +40,12 @@ public class GameHandler{
             throw new RuntimeException(e);
         }
     }
-    private void listenForArrayList() {
+    private void listenForPacket() {
         try {
             while (true) {
-                Object object = in.readObject();
-                if (object instanceof ArrayList<?>) {
-                    ArrayList<Player> list = (ArrayList<Player>) object;
-                    for (Player p : list) {
-                    }
+                Object packet = in.readObject();
+                if (packet instanceof ArrayList<?>) {
+                    ArrayList<Player> list = (ArrayList<Player>) packet;
                     slidePanel.updatePlayerLabel(list);
                 }
             }
@@ -66,6 +61,10 @@ public class GameHandler{
                 e.printStackTrace();
             }
         }
+    }
+    public void sendMessage(String content) throws IOException {
+        out.reset();
+        out.writeObject(new Message(player.getName(),content));
     }
 
 

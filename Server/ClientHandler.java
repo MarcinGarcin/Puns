@@ -34,8 +34,9 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public void sendPlayerList(List<Player> players) throws IOException {
-        out.writeObject(players);
+    public <T> void sendPacket(T data) throws IOException {
+        out.reset();
+        out.writeObject(data);
         out.flush();
     }
 }

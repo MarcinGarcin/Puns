@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -7,7 +6,8 @@ import java.util.List;
 
 public class Server {
     private List<ClientHandler> clients = new ArrayList<>();
-    private  List<Player> playerList = new ArrayList<>(); // Corrected declaration
+    private  List<Player> playerList = new ArrayList<>();
+    private List<String> messageList = new ArrayList<>();
 
     public static void main(String[] args) {
         new Server().start(12345);
@@ -28,11 +28,10 @@ public class Server {
         }
     }
 
-    public synchronized void broadcastPlayerList() {
+    public synchronized <T> void broadcastPacket(T object) {
         for (ClientHandler client : clients) {
             try {
-                client.sendPlayerList(playerList);
-                System.out.println(playerList);
+                client.sendPacket(object);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -42,6 +41,11 @@ public class Server {
 
     public void addPlayer(Player player) {
         playerList.add(player);
-        broadcastPlayerList();
+        broadcastPacket(playerList);
+    }
+    public void chatHandler(Message message){
+        messageList.add(message.getSender() + ": "+message.getContent());
+        broadcastPacket(messageList);
+
     }
 }
