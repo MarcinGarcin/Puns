@@ -31,6 +31,7 @@ public class Window extends JFrame {
     }
 
     private void setupLoginPanel() {
+        //TODO add avatar photo, choosing username
         JPanel loginPanel = new JPanel();
         loginPanel.setBackground(darkerGrey);
         loginPanel.setLayout(null);
@@ -62,25 +63,27 @@ public class Window extends JFrame {
         gamePanel.setBackground(darkerGrey);
         gamePanel.setLayout(null);
 
-        slidePanel = new SlidePanel();
 
+        slidePanel = new SlidePanel();
 
 
         chatPanel = new ChatPanel(width / 5,height-50);
         chatPanel.setBackground(grey);
         chatPanel.setLayout(null);
 
+
         gameHandler = new GameHandler(ip,slidePanel,chatPanel);
         chatPanel.setGameHandler(gameHandler);
+
 
         drawPanel = new DrawPanel();
         drawPanel.setBounds(width / 5 + 20, 20, width - width / 5 - 40, height - 140);
         drawPanel.setBackground(Color.WHITE);
 
+
         gamePanel.add(slidePanel);
         gamePanel.add(chatPanel);
         gamePanel.add(drawPanel);
         add(gamePanel);
-
     }
 }

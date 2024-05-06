@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -11,9 +12,12 @@ class SlidePanel extends JPanel {
     private int newX;
     private int mouseInitialX;
     private boolean isDragging = false;
+    private Color borderColor = new Color(252,222,6);
+    private Color darkerGrey = new Color(40, 40, 40);
 
     public SlidePanel() {
-        setBackground(Color.BLUE);
+        setBackground(darkerGrey);
+        setBorder(new LineBorder(Color.red));
         setBounds(initialX, 50, width, height);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
