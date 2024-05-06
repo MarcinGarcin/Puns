@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientHandler implements Runnable {
@@ -27,6 +28,11 @@ public class ClientHandler implements Runnable {
                 if (obj instanceof Player) {
                     Player player = (Player) obj;
                     server.addPlayer(player);
+                }
+                else if (obj instanceof Message){
+                    Message message = (Message) obj;
+                    server.chatHandler(message);
+
                 }
             }
         } catch (IOException | ClassNotFoundException e) {

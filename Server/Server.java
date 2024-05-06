@@ -46,6 +46,10 @@ public class Server {
     public void chatHandler(Message message){
         messageList.add(message.getSender() + ": "+message.getContent());
         broadcastPacket(messageList);
+        for(String M: messageList){
+            System.out.println(M);
+
+        }
 
     }
 }

@@ -64,12 +64,14 @@ public class Window extends JFrame {
 
         slidePanel = new SlidePanel();
 
-        gameHandler = new GameHandler(ip,slidePanel);
 
-        chatPanel = new ChatPanel(width / 5,height-50, gameHandler);
+
+        chatPanel = new ChatPanel(width / 5,height-50);
         chatPanel.setBackground(grey);
         chatPanel.setLayout(null);
 
+        gameHandler = new GameHandler(ip,slidePanel,chatPanel);
+        chatPanel.setGameHandler(gameHandler);
 
         drawPanel = new DrawPanel();
         drawPanel.setBounds(width / 5 + 20, 20, width - width / 5 - 40, height - 140);

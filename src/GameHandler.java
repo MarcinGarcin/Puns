@@ -2,23 +2,30 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class GameHandler{
+public class GameHandler implements Runnable {
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private Socket socket;
     private Player player;
     private String ip;
-    private Object object;
     private SlidePanel slidePanel;
+    private ChatPanel chatPanel;
 
-    public GameHandler(String ip, SlidePanel slidePanel) throws IOException, ClassNotFoundException {
+    public GameHandler(String ip, SlidePanel slidePanel,ChatPanel chatPanel) throws IOException, ClassNotFoundException {
         this.ip = ip;
         this.slidePanel = slidePanel;
+        this.chatPanel = chatPanel;
         createPlayer();
         setupServerConnection();
         sendJoiningPing();
-        new Thread(this::listenForPacket).start();
+        new Thread(this).start();
     }
+
+    @Override
+    public void run() {
+        listenForPacket();
+    }
+
     private void setupServerConnection() {
         try {
             socket = new Socket(ip, 12345);
@@ -33,6 +40,7 @@ public class GameHandler{
     private void createPlayer(){
         player = new Player("Marcin");
     }
+
     private void sendJoiningPing(){
         try {
             out.writeObject(player);
@@ -40,13 +48,23 @@ public class GameHandler{
             throw new RuntimeException(e);
         }
     }
+
     private void listenForPacket() {
         try {
             while (true) {
                 Object packet = in.readObject();
                 if (packet instanceof ArrayList<?>) {
-                    ArrayList<Player> list = (ArrayList<Player>) packet;
-                    slidePanel.updatePlayerLabel(list);
+                    ArrayList<?> list = (ArrayList<?>) packet;
+                    Object firstElement = list.get(0);
+                    firstElement.getClass();
+                    if (firstElement instanceof Player) {
+                        System.out.println("masny ben");
+                        ArrayList<Player> playerList = (ArrayList<Player>) list;
+                        slidePanel.updatePlayerLabel(playerList);
+                    } else if (firstElement instanceof String) {
+                        ArrayList<String> messageList = (ArrayList<String>) list;
+                        chatPanel.updateChat(messageList);
+                    }
                 }
             }
         } catch (EOFException e) {
@@ -62,10 +80,9 @@ public class GameHandler{
             }
         }
     }
+
     public void sendMessage(String content) throws IOException {
         out.reset();
         out.writeObject(new Message(player.getName(),content));
     }
-
-
 }

@@ -15,17 +15,15 @@ class ChatPanel extends JPanel {
     private Color grey = new Color(51, 51, 51);
     private Color darkerGrey = new Color(40, 40, 40);
     private Color borderColor = new Color(252,222,6);
+    private JScrollPane scrollPane;
+    private ArrayList<String> chatMessages = new ArrayList<>();
     private GameHandler gh;
-
-
-    public ChatPanel(int width, int height, GameHandler gh) {
+    public ChatPanel(int width, int height) {
         this.width = width;
         this.height = height;
-        this.gh = gh;
         setupChatPanel();
-
-
     }
+
     private void setupChatPanel(){
         setBounds(15,5,width,height);
         setBorder(new LineBorder(borderColor));
@@ -35,6 +33,13 @@ class ChatPanel extends JPanel {
         chatArea.setBackground(darkerGrey);
         chatArea.setBorder(new LineBorder(borderColor));
 
+
+        //TODO make scrollbar looks normal
+        scrollPane = new JScrollPane(chatArea);
+        scrollPane.setBounds(5,5,width-10,height-50);
+        scrollPane.setBorder(new LineBorder(borderColor));
+        scrollPane.getVerticalScrollBar().setBackground(darkerGrey);
+        scrollPane.getHorizontalScrollBar().setBackground(darkerGrey);
 
         messageField = new JTextField();
         messageField.setBackground(darkerGrey);
@@ -55,18 +60,29 @@ class ChatPanel extends JPanel {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-
             }
         });
 
-        add(chatArea);
+        add(scrollPane);
         add(messageField);
         add(sendButton);
-
-
+    }
+    private void displayChat() {
+        StringBuilder chatContent = new StringBuilder();
+        for (String message : this.chatMessages) {
+            chatContent.append(message).append("\n");
+        }
+        chatArea.setText(chatContent.toString());
+        chatArea.setForeground(borderColor);
     }
 
 
-
+    public void updateChat(ArrayList<String> newMessages) {
+        this.chatMessages = newMessages;
+        displayChat();
+    }
+    public void setGameHandler(GameHandler gh) {
+        this.gh = gh;
+    }
 
 }
