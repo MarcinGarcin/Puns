@@ -28,6 +28,7 @@ public class ClientHandler implements Runnable {
                 if (obj instanceof Player) {
                     Player player = (Player) obj;
                     server.addPlayer(player);
+                    server.chatHandler(new Message("Server: ",player.getName() + " joined"));
                 }
                 else if (obj instanceof Message){
                     Message message = (Message) obj;

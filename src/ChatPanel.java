@@ -3,6 +3,8 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -44,7 +46,7 @@ class ChatPanel extends JPanel {
         messageField = new JTextField();
         messageField.setBackground(darkerGrey);
         messageField.setBounds(5,height-40,width-70,35);
-        messageField.setForeground(Color.red);
+        messageField.setForeground(Color.WHITE);
         messageField.setBorder(new LineBorder(borderColor));
 
         sendButton = new JButton("Send");
@@ -62,6 +64,31 @@ class ChatPanel extends JPanel {
                 }
             }
         });
+        this.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                System.out.println(e.getKeyCode());
+                if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                    try {
+                        gh.sendMessage(messageField.getText());
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
 
         add(scrollPane);
         add(messageField);
