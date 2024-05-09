@@ -57,37 +57,17 @@ class ChatPanel extends JPanel {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    gh.sendMessage(messageField.getText());
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+                sendMessage();
             }
         });
-        this.addKeyListener(new KeyListener() {
+
+        messageField.addActionListener(new ActionListener() {
             @Override
-            public void keyTyped(KeyEvent e) {
-                System.out.println(e.getKeyCode());
-                if(e.getKeyCode() == KeyEvent.VK_ENTER){
-                    try {
-                        gh.sendMessage(messageField.getText());
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
+            public void actionPerformed(ActionEvent e) {
+                sendMessage();
             }
         });
+
 
 
         add(scrollPane);
@@ -110,6 +90,13 @@ class ChatPanel extends JPanel {
     }
     public void setGameHandler(GameHandler gh) {
         this.gh = gh;
+    }
+    private void sendMessage() {
+        try {
+            gh.sendMessage(messageField.getText());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
 }
