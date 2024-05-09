@@ -11,6 +11,7 @@ public class ClientHandler implements Runnable {
     private ObjectInputStream in;
     private List<Player> playerList;
     private Server server;
+    private int currentPlayerIndex = 0;
 
     public ClientHandler(Socket socket, Server server, List<Player> playerList) throws IOException {
         this.clientSocket = socket;
@@ -45,5 +46,14 @@ public class ClientHandler implements Runnable {
         out.reset();
         out.writeObject(data);
         out.flush();
+    }
+    public void chooseNextDrawer() {
+        if (!playerList.isEmpty()) {
+            Player currentPlayer = playerList.get(currentPlayerIndex);
+
+            broadcastPacket("Player " + currentPlayer.getName() + " is now drawing.");
+
+            currentPlayerIndex = (currentPlayerIndex + 1) % playerList.size();
+        }
     }
 }
