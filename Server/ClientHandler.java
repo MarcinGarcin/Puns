@@ -52,6 +52,7 @@ public class ClientHandler implements Runnable {
         if (!playerList.isEmpty()) {
             Player currentPlayer = playerList.get(currentPlayerIndex);
 
+
             broadcastPacket("Player " + currentPlayer.getName() + " is now drawing.");
 
             currentPlayerIndex = (currentPlayerIndex + 1) % playerList.size();
