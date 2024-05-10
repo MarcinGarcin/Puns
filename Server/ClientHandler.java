@@ -34,8 +34,6 @@ public class ClientHandler implements Runnable {
                 else if (obj instanceof Message){
                     Message message = (Message) obj;
                     server.chatHandler(message);
-
-
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
