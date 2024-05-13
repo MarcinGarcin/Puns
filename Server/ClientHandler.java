@@ -13,6 +13,7 @@ public class ClientHandler implements Runnable {
     private Server server;
     private int currentPlayerIndex = 0;
     private Player player;
+    //TODO if something doesnt work this Player object may be the cause
 
 
     public ClientHandler(Socket socket, Server server, List<Player> playerList) throws IOException {
