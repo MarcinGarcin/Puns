@@ -12,6 +12,8 @@ public class ClientHandler implements Runnable {
     private List<Player> playerList;
     private Server server;
     private int currentPlayerIndex = 0;
+    private Player player;
+
 
     public ClientHandler(Socket socket, Server server, List<Player> playerList) throws IOException {
         this.clientSocket = socket;
@@ -27,13 +29,16 @@ public class ClientHandler implements Runnable {
             while (true) {
                 Object obj = in.readObject();
                 if (obj instanceof Player) {
-                    Player player = (Player) obj;
+                    player = (Player) obj;
                     server.addPlayer(player);
                     server.chatHandler(new Message("Server: ",player.getName() + " joined"));
                 }
                 else if (obj instanceof Message){
                     Message message = (Message) obj;
                     server.chatHandler(message);
+                    if(message.getContent().contains("/rdy")){
+                        server.chatHandler(new Message("Server: ",player.getName() + " is ready"));
+                    }
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
