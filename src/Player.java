@@ -3,7 +3,7 @@ import java.io.Serializable;
 public class Player implements Serializable {
     private static final long serialVersionUID = 1;
     private String name;
-    private Boolean isReady = false;
+    public Boolean isReady = false;
     private int score = 0;
 
     public Player(String name) {
@@ -15,6 +15,13 @@ public class Player implements Serializable {
     }
     public int getScore() {
         return score;
+    }
+
+    public void setIsReady(Boolean isReady) {
+        this.isReady = isReady;
+    }
+    public boolean isReady() {
+        return isReady;
     }
 }
 

@@ -10,11 +10,14 @@ public class GameHandler implements Runnable {
     private String ip;
     private SlidePanel slidePanel;
     private ChatPanel chatPanel;
+    private ArrayList<String> messageList;
+    private DrawPanel drawPanel;
 
-    public GameHandler(String ip, SlidePanel slidePanel,ChatPanel chatPanel) throws IOException, ClassNotFoundException {
+    public GameHandler(String ip, SlidePanel slidePanel,ChatPanel chatPanel, DrawPanel drawPanel) throws IOException, ClassNotFoundException {
         this.ip = ip;
         this.slidePanel = slidePanel;
         this.chatPanel = chatPanel;
+        this.drawPanel = drawPanel;
         createPlayer();
         setupServerConnection();
         sendJoiningPing();
@@ -58,13 +61,22 @@ public class GameHandler implements Runnable {
                     Object firstElement = list.get(0);
                     firstElement.getClass();
                     if (firstElement instanceof Player) {
-                        System.out.println("masny ben");
                         ArrayList<Player> playerList = (ArrayList<Player>) list;
                         slidePanel.updatePlayerLabel(playerList);
                     } else if (firstElement instanceof String) {
-                        ArrayList<String> messageList = (ArrayList<String>) list;
+                        messageList = (ArrayList<String>) list;
                         chatPanel.updateChat(messageList);
                     }
+                } else if (packet instanceof Message) {
+                    Message message = (Message) packet;
+                    messageList.add(message.getSender()+" "+message.getContent());
+                    chatPanel.updateChat(messageList);
+                    System.out.println("Mozna rysowac");
+
+
+
+
+
                 }
             }
         } catch (EOFException e) {
@@ -84,5 +96,8 @@ public class GameHandler implements Runnable {
     public void sendMessage(String content) throws IOException {
         out.reset();
         out.writeObject(new Message(player.getName(),content));
+    }
+    public ObjectOutputStream getOut(){
+        return out;
     }
 }

@@ -10,7 +10,7 @@ public class Window extends JFrame {
     private SlidePanel slidePanel;
     private int width = 1280;
     private int height = 720;
-    private String ip ;
+    private String ip;
     private ChatPanel chatPanel;
     private JPanel gamePanel;
     private GameHandler gameHandler;
@@ -31,7 +31,6 @@ public class Window extends JFrame {
     }
 
     private void setupLoginPanel() {
-        //TODO add avatar photo, choosing username
         JPanel loginPanel = new JPanel();
         loginPanel.setBackground(darkerGrey);
         loginPanel.setLayout(null);
@@ -63,23 +62,20 @@ public class Window extends JFrame {
         gamePanel.setBackground(darkerGrey);
         gamePanel.setLayout(null);
 
-
         slidePanel = new SlidePanel();
 
-
-        chatPanel = new ChatPanel(width / 5,height-50);
+        chatPanel = new ChatPanel(width / 5, height - 50);
         chatPanel.setBackground(grey);
         chatPanel.setLayout(null);
 
-
-        gameHandler = new GameHandler(ip,slidePanel,chatPanel);
+        gameHandler = new GameHandler(ip, slidePanel, chatPanel,drawPanel);
         chatPanel.setGameHandler(gameHandler);
-
 
         drawPanel = new DrawPanel();
         drawPanel.setBounds(width / 5 + 20, 20, width - width / 5 - 40, height - 140);
         drawPanel.setBackground(Color.WHITE);
-
+        drawPanel.setOut(gameHandler.getOut());
+        drawPanel.setDrawing(true);
 
         gamePanel.add(slidePanel);
         gamePanel.add(chatPanel);
