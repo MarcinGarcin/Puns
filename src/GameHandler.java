@@ -27,6 +27,7 @@ public class GameHandler implements Runnable {
     @Override
     public void run() {
         listenForPacket();
+
     }
 
     private void setupServerConnection() {
