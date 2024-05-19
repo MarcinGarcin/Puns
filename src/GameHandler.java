@@ -38,7 +38,6 @@ public class GameHandler implements Runnable {
         } catch (IOException e) {
             System.err.println("Failed to connect to the server: " + e.getMessage());
             e.printStackTrace();
-
         }
     }
 
