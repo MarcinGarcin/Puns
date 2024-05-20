@@ -8,6 +8,7 @@ public class ClientHandler implements Runnable {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private Server server;
+    public Player player;
 
     public ClientHandler(Socket socket, Server server) throws IOException {
         this.clientSocket = socket;
@@ -21,13 +22,21 @@ public class ClientHandler implements Runnable {
         try {
             while (true) {
                 Object obj = in.readObject();
-                if(obj instanceof Player){
-                    Player player = (Player) obj;
+                if (obj instanceof Player) {
+                    player = (Player) obj;
                     server.addPlayer(player);
-                    server.broadcastData(new Message("Server: ", player.getName()+" has joined the game!"));
-                }
-                else{
-                    System.out.println("chuj");
+                    System.out.println(player.getName());
+                    server.broadcastData(server.playerList);
+                    server.broadcastData(new Message("Server: ", player.getName() + " has joined the game!"));
+                } else if (obj instanceof Message) {
+                    Message message = (Message) obj;
+                    server.broadcastData(message);
+                    System.out.println(message.getContent());
+                    if (message.getContent().equals("/rdy")&&!(player.getReady())) {
+                        server.broadcastData(new Message("Server: ", player.getName() + " is ready"));
+                        player.setReady(true);
+                        server.startGame();
+                    }
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -39,6 +48,10 @@ public class ClientHandler implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean isPlayerReady() {
+        return player.getReady();
     }
 
     public void sendData(Object data) {
