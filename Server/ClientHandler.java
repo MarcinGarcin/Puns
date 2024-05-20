@@ -22,14 +22,13 @@ public class ClientHandler implements Runnable {
         try {
             while (true) {
                 Object obj = in.readObject();
-                if (obj instanceof Player) {
+                if (obj instanceof Player ) {
                     player = (Player) obj;
                     server.addPlayer(player);
                     System.out.println(player.getName());
                     server.broadcastData(server.playerList);
                     server.broadcastData(new Message("Server: ", player.getName() + " has joined the game!"));
-                } else if (obj instanceof Message) {
-                    Message message = (Message) obj;
+                } else if (obj instanceof Message message) {
                     server.broadcastData(message);
                     System.out.println(message.getContent());
                     if (message.getContent().equals("/rdy")&&!(player.getReady())) {

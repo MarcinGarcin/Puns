@@ -60,8 +60,7 @@ public class GameHandler implements Runnable {
                 if (packet instanceof ArrayList<?>) {
                     players = (ArrayList<Player>) packet;
                     slidePanel.updatePlayerLabel(players);
-                } else if (packet instanceof Message) {
-                    Message message = (Message) packet;
+                } else if (packet instanceof Message message) {
                     chatMessages.add(message.getSender() + ": " + message.getContent());
                     chatPanel.updateChat(chatMessages);
                 } else if (packet instanceof Player){
