@@ -68,14 +68,17 @@ public class Window extends JFrame {
         chatPanel.setBackground(grey);
         chatPanel.setLayout(null);
 
-        gameHandler = new GameHandler(ip, slidePanel, chatPanel,drawPanel);
-        chatPanel.setGameHandler(gameHandler);
+
+
 
         drawPanel = new DrawPanel();
         drawPanel.setBounds(width / 5 + 20, 20, width - width / 5 - 40, height - 140);
         drawPanel.setBackground(Color.WHITE);
-        drawPanel.setOut(gameHandler.getOut());
         drawPanel.setDrawing(true);
+
+        gameHandler = new GameHandler(ip, slidePanel, chatPanel,drawPanel);
+        chatPanel.setGameHandler(gameHandler);
+        drawPanel.setOut(gameHandler.getOut());
 
         gamePanel.add(slidePanel);
         gamePanel.add(chatPanel);

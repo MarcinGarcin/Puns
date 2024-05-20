@@ -10,10 +10,11 @@ public class GameHandler implements Runnable {
     private String ip;
     private SlidePanel slidePanel;
     private ChatPanel chatPanel;
-    private ArrayList<String> messageList;
     private DrawPanel drawPanel;
+    private ArrayList<String> chatMessages = new ArrayList<>();
+    private ArrayList<Player> players = new ArrayList<>();
 
-    public GameHandler(String ip, SlidePanel slidePanel,ChatPanel chatPanel, DrawPanel drawPanel) throws IOException, ClassNotFoundException {
+    public GameHandler(String ip, SlidePanel slidePanel, ChatPanel chatPanel, DrawPanel drawPanel) throws IOException, ClassNotFoundException {
         this.ip = ip;
         this.slidePanel = slidePanel;
         this.chatPanel = chatPanel;
@@ -27,7 +28,6 @@ public class GameHandler implements Runnable {
     @Override
     public void run() {
         listenForPacket();
-
     }
 
     private void setupServerConnection() {
@@ -41,11 +41,11 @@ public class GameHandler implements Runnable {
         }
     }
 
-    private void createPlayer(){
+    private void createPlayer() {
         player = new Player("Marcin");
     }
 
-    private void sendJoiningPing(){
+    private void sendJoiningPing() {
         try {
             out.writeObject(player);
         } catch (IOException e) {
@@ -58,26 +58,18 @@ public class GameHandler implements Runnable {
             while (true) {
                 Object packet = in.readObject();
                 if (packet instanceof ArrayList<?>) {
-                    ArrayList<?> list = (ArrayList<?>) packet;
-                    Object firstElement = list.get(0);
-                    firstElement.getClass();
-                    if (firstElement instanceof Player) {
-                        ArrayList<Player> playerList = (ArrayList<Player>) list;
-                        slidePanel.updatePlayerLabel(playerList);
-                    } else if (firstElement instanceof String) {
-                        messageList = (ArrayList<String>) list;
-                        chatPanel.updateChat(messageList);
-                    }
+                    players = (ArrayList<Player>) packet;
+                    slidePanel.updatePlayerLabel(players);
                 } else if (packet instanceof Message) {
                     Message message = (Message) packet;
-                    messageList.add(message.getSender()+" "+message.getContent());
-                    chatPanel.updateChat(messageList);
-                    System.out.println("Mozna rysowac");
-
-
-
-
-
+                    chatMessages.add(message.getSender() + ": " + message.getContent());
+                    chatPanel.updateChat(chatMessages);
+                } else if (packet instanceof Player){
+                    player = (Player) packet;
+                    drawPanel.setDrawing(player.getDrawing());
+                    if(player.getDrawing()){
+                        System.out.println("Rysuhje");
+                    }
                 }
             }
         } catch (EOFException e) {
@@ -96,9 +88,11 @@ public class GameHandler implements Runnable {
 
     public void sendMessage(String content) throws IOException {
         out.reset();
-        out.writeObject(new Message(player.getName(),content));
+        out.writeObject(new Message(player.getName(), content));
+        out.flush();
     }
-    public ObjectOutputStream getOut(){
+
+    public ObjectOutputStream getOut() {
         return out;
     }
 }
