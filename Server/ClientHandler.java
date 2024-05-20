@@ -21,23 +21,33 @@ public class ClientHandler implements Runnable {
         try {
             while (true) {
                 Object obj = in.readObject();
-                if (obj instanceof DrawData) {
-                    DrawData drawData = (DrawData) obj;
-                    server.broadcastDrawData(drawData);
+                if(obj instanceof Player){
+                    Player player = (Player) obj;
+                    server.addPlayer(player);
+                    server.broadcastData(new Message("Server: ", player.getName()+" has joined the game!"));
+                }
+                else{
+                    System.out.println("chuj");
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public void sendDrawData(DrawData drawData) {
+    public void sendData(Object data) {
         try {
-            out.writeObject(drawData);
+            out.reset();
+            out.writeObject(data);
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }

@@ -6,6 +6,8 @@ import java.util.List;
 
 public class Server {
     private List<ClientHandler> clients = new ArrayList<>();
+    private List<Player> playerList = new ArrayList<>();
+    private List<String> messageList = new ArrayList<>();
 
     public static void main(String[] args) {
         new Server().start(12345);
@@ -26,9 +28,14 @@ public class Server {
         }
     }
 
-    public synchronized void broadcastDrawData(DrawData drawData) {
+    public void addPlayer(Player player) {
+        playerList.add(player);
+        broadcastData(playerList);
+    }
+
+    public synchronized void broadcastData(Object data) {
         for (ClientHandler client : clients) {
-            client.sendDrawData(drawData);
+            client.sendData(data);
         }
     }
 }
