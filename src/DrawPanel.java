@@ -78,20 +78,4 @@ public class DrawPanel extends JPanel {
     }
 }
 
-class DrawData implements Serializable {
-    private Point start;
-    private Point end;
 
-    public DrawData(Point start, Point end) {
-        this.start = start;
-        this.end = end;
-    }
-
-    public Point getStart() {
-        return start;
-    }
-
-    public Point getEnd() {
-        return end;
-    }
-}
