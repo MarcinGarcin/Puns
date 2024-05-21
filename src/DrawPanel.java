@@ -4,7 +4,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class DrawPanel extends JPanel {
     private Point lastPoint;
@@ -76,6 +77,8 @@ public class DrawPanel extends JPanel {
         g2d.drawLine(start.x, start.y, end.x, end.y);
         repaint();
     }
+
+    public void drawData(DrawData data) {
+        drawLine(data.getStart(), data.getEnd());
+    }
 }
-
-

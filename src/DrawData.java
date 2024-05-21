@@ -1,7 +1,8 @@
-import java.awt.*;
+import java.awt.Point;
 import java.io.Serializable;
 
-class DrawData implements Serializable {
+public class DrawData implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Point start;
     private Point end;
 

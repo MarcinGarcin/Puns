@@ -4,10 +4,10 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
-    private Socket clientSocket;
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
-    private Server server;
+    private final Socket clientSocket;
+    private final ObjectOutputStream out;
+    private final ObjectInputStream in;
+    private final Server server;
     public Player player;
 
     public ClientHandler(Socket socket, Server server) throws IOException {
@@ -22,20 +22,24 @@ public class ClientHandler implements Runnable {
         try {
             while (true) {
                 Object obj = in.readObject();
-                if (obj instanceof Player ) {
+                if (obj instanceof Player) {
                     player = (Player) obj;
                     server.addPlayer(player);
                     System.out.println(player.getName());
                     server.broadcastData(server.playerList);
-                    server.broadcastData(new Message("Server: ", player.getName() + " has joined the game!"));
+                    server.broadcastData(new Message("Server", player.getName() + " has joined the game!"));
                 } else if (obj instanceof Message message) {
                     server.broadcastData(message);
                     System.out.println(message.getContent());
-                    if (message.getContent().equals("/rdy")&&!(player.getReady())) {
-                        server.broadcastData(new Message("Server: ", player.getName() + " is ready"));
+                    if (message.getContent().equals("/rdy") && !player.getReady()) {
+                        server.broadcastData(new Message("Server", player.getName() + " is ready"));
                         player.setReady(true);
                         server.startGame();
+                    } else if (!player.isDrawing) {
+                        server.checkGuess(message.getContent(), player);
                     }
+                } else if (obj instanceof DrawData drawData) {
+                    server.broadcastImage(drawData);
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -48,11 +52,6 @@ public class ClientHandler implements Runnable {
             }
         }
     }
-
-    public boolean isPlayerReady() {
-        return player.getReady();
-    }
-
     public void sendData(Object data) {
         try {
             out.reset();

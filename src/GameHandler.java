@@ -69,6 +69,9 @@ public class GameHandler implements Runnable {
                     if(player.getDrawing()){
                         System.out.println("Rysuhje");
                     }
+                } else if (packet instanceof  DrawData drawData) {
+                    drawPanel.drawData(drawData);
+
                 }
             }
         } catch (EOFException e) {

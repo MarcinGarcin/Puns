@@ -69,8 +69,6 @@ public class Window extends JFrame {
         chatPanel.setLayout(null);
 
 
-
-
         drawPanel = new DrawPanel();
         drawPanel.setBounds(width / 5 + 20, 20, width - width / 5 - 40, height - 140);
         drawPanel.setBackground(Color.WHITE);
