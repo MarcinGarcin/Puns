@@ -10,8 +10,9 @@ public class Server {
     public List<Player> playerList = new ArrayList<>();
     private List<String> words = List.of("Cat", "Dog", "House", "Car", "Tree", "Sun", "Star", "Moon", "Computer", "Phone");
     private String currentWord;
+    private int currentDrawerIndex = 0; // Dodanie indeksu rysującego gracza
 
-    public void start(int port) {
+    public void start(int port){
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Server started on port " + port);
             while (true) {
@@ -33,15 +34,18 @@ public class Server {
 
             for (int i = 0; i < clients.size(); i++) {
                 Player player = playerList.get(i);
-                player.setDrawing(i == 0);
+                player.setDrawing(i == currentDrawerIndex);
                 clients.get(i).sendData(player);
 
-                if (i == 0) {
+                if (i == currentDrawerIndex) {
                     clients.get(i).sendData(new Message("Server", "You have to draw: " + currentWord));
                 } else {
                     clients.get(i).sendData(new Message("Server", "Guess the word!"));
                 }
             }
+            broadcastData(new Message("Server: ","New round"));
+            currentDrawerIndex = (currentDrawerIndex + 1) % playerList.size();
+
         } else {
             broadcastData(new Message("Server", "Not enough players to start the game"));
         }

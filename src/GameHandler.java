@@ -63,6 +63,10 @@ public class GameHandler implements Runnable {
                 } else if (packet instanceof Message message) {
                     chatMessages.add(message.getSender() + ": " + message.getContent());
                     chatPanel.updateChat(chatMessages);
+                    if(message.getSender().equals("Server: ")&&message.getContent().equals("New round")){
+                        drawPanel.repaint();
+                        drawPanel.revalidate();
+                    }
                 } else if (packet instanceof Player){
                     player = (Player) packet;
                     drawPanel.setDrawing(player.getDrawing());
