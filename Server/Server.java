@@ -30,20 +30,23 @@ public class Server {
     public void startGame() {
         if (playerList.size() >= 2) {
             currentWord = pickRandomWord();
-            broadcastData(new Message("Server", "New round started. One player is drawing, others guess!"));
 
             for (int i = 0; i < clients.size(); i++) {
                 Player player = playerList.get(i);
                 player.setDrawing(i == currentDrawerIndex);
                 clients.get(i).sendData(player);
 
+
+
                 if (i == currentDrawerIndex) {
                     clients.get(i).sendData(new Message("Server", "You have to draw: " + currentWord));
                 } else {
-                    clients.get(i).sendData(new Message("Server", "Guess the word!"));
+                    clients.get(i).sendData(new Message("Server: ",playerList.get(currentDrawerIndex).getName()+" is drawing,Guess the word"));
                 }
             }
             broadcastData(new Message("Server: ","New round"));
+
+
             currentDrawerIndex = (currentDrawerIndex + 1) % playerList.size();
 
         } else {
