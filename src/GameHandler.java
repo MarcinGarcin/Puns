@@ -69,9 +69,6 @@ public class GameHandler implements Runnable {
                 } else if (packet instanceof Player){
                     player = (Player) packet;
                     drawPanel.setDrawing(player.getDrawing());
-                    if(player.getDrawing()){
-                        System.out.println("Rysuhje");
-                    }
                 } else if (packet instanceof  DrawData drawData) {
                     drawPanel.drawData(drawData);
 

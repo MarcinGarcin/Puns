@@ -47,7 +47,6 @@ public class DrawPanel extends JPanel {
     }
 
     private void sendDrawData(Point start, Point end) {
-        System.out.println("Wysłano");
         try {
             out.writeObject(new DrawData(start, end));
             out.flush();
