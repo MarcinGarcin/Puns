@@ -14,6 +14,7 @@ public class Window extends JFrame {
     private ChatPanel chatPanel;
     private JPanel gamePanel;
     private GameHandler gameHandler;
+    private DrawControlPanel drawControlPanel;
 
     public Window(String ip) {
         this.ip = ip;
@@ -74,6 +75,11 @@ public class Window extends JFrame {
         drawPanel.setBackground(Color.WHITE);
         drawPanel.setDrawing(true);
 
+        drawControlPanel = new DrawControlPanel(drawPanel);
+        drawControlPanel.setBounds(width/2-120,height-110,500,60);
+        drawControlPanel.setBackground(grey);
+        drawControlPanel.setVisible(true);
+
         gameHandler = new GameHandler(ip, slidePanel, chatPanel,drawPanel);
         chatPanel.setGameHandler(gameHandler);
         drawPanel.setOut(gameHandler.getOut());
@@ -81,6 +87,7 @@ public class Window extends JFrame {
         gamePanel.add(slidePanel);
         gamePanel.add(chatPanel);
         gamePanel.add(drawPanel);
+        gamePanel.add(drawControlPanel);
         add(gamePanel);
     }
 }

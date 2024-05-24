@@ -26,7 +26,7 @@ class ChatPanel extends JPanel {
     }
 
     private void setupChatPanel() {
-        setBounds(15, 5, width, height);
+        setBounds(17, 5, width, height);
         setBorder(new LineBorder(borderColor));
         setBackground(grey);
         setLayout(null);
