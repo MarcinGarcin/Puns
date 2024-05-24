@@ -90,7 +90,7 @@ public class GameHandler implements Runnable {
 
     public void sendMessage(String content) throws IOException {
         out.reset();
-        out.writeObject(new Message(player.getName(), content));
+        out.writeObject(new Message(player.getName(), content,player.toString()));
         out.flush();
     }
 

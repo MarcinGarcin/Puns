@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 class SlidePanel extends JPanel {
     private int width = 100;
@@ -55,19 +57,26 @@ class SlidePanel extends JPanel {
             }
         });
     }
-    public void updatePlayerLabel(ArrayList<Player> playerList){
+    public void updatePlayerLabel(ArrayList<Player> playerList) {
         this.removeAll();
+
+        Collections.sort(playerList, new Comparator<Player>() {
+            @Override
+            public int compare(Player p1, Player p2) {
+                return Integer.compare(p2.getScore(), p1.getScore());
+            }
+        });
+
         for (int i = 0; i < playerList.size(); i++) {
-            System.out.println(playerList);
             Player player = playerList.get(i);
-            JLabel playerLabel = new JLabel(i+"."+player.getName()+":   "+player.getScore());
+            JLabel playerLabel = new JLabel((i + 1) + ". " + player.getName() + ": " + player.getScore());
             playerLabel.setForeground(Color.WHITE);
             playerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
             add(playerLabel);
-            revalidate();
-            repaint();
         }
 
+        revalidate();
+        repaint();
     }
 
 

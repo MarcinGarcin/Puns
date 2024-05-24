@@ -23,6 +23,9 @@ public class Player implements Serializable {
     public int getScore() {
         return this.score;
     }
+    public void addScore(int score) {
+        this.score += score;
+    }
     public boolean getReady(){
         return this.isReady;
     }

@@ -80,6 +80,8 @@ public class Server {
 
     public synchronized void checkGuess(String guess, Player player) {
         if (guess.equalsIgnoreCase(currentWord)) {
+            player.addScore(10);
+            broadcastData(playerList);
             broadcastData(new Message("Server", player.getName() + " guessed the word! The word was: " + currentWord));
             startGame();
         }
