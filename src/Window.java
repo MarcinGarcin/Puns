@@ -11,13 +11,13 @@ public class Window extends JFrame {
     private int width = 1280;
     private int height = 720;
     private String ip;
+    private String nickName;
     private ChatPanel chatPanel;
     private JPanel gamePanel;
     private GameHandler gameHandler;
     private DrawControlPanel drawControlPanel;
 
-    public Window(String ip) {
-        this.ip = ip;
+    public Window() {
         setupWindow();
         setupLoginPanel();
     }
@@ -32,18 +32,44 @@ public class Window extends JFrame {
     }
 
     private void setupLoginPanel() {
+        JPanel loginMainPanel = new JPanel();
+        loginMainPanel.setBackground(darkerGrey);
+        loginMainPanel.setLayout(null);
+        loginMainPanel.setVisible(true);
+
         JPanel loginPanel = new JPanel();
-        loginPanel.setBackground(darkerGrey);
+        loginPanel.setBackground(grey);
         loginPanel.setLayout(null);
-        loginPanel.setBounds(width / 2 - width / 6, height / 2 - height / 4, width / 3, height / 2);
+        loginPanel.setVisible(true);
+        loginPanel.setBounds(width/2-200, height/2-300, 400, 400);
+
+        JTextArea nickArea = new JTextArea("Nickname");
+        nickArea.setEditable(true);
+        nickArea.setBackground(darkerGrey);
+        nickArea.setForeground(Color.WHITE);
+        nickArea.setFont(new Font("Arial", Font.BOLD, 20));
+        nickArea.setBounds(100, 50, 200, 30);
+        nickArea.setVisible(true);
+
+
+        JTextArea ipArea = new JTextArea();
+        ipArea.setEditable(true);
+        ipArea.setBackground(darkerGrey);
+        ipArea.setForeground(Color.WHITE);
+        ipArea.setFont(new Font("Arial", Font.BOLD, 20));
+        ipArea.setBounds(100, 100, 200, 30);
+        ipArea.setVisible(true);
 
         JButton joinGame = new JButton("Join Game");
-        joinGame.setBounds(0, 0, 100, 50);
+        joinGame.setBounds(75, 150, 250, 50);
+        joinGame.setVisible(true);
         joinGame.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                loginPanel.setVisible(false);
+                loginMainPanel.setVisible(false);
                 try {
+                    ip = ipArea.getText();
+                    nickName = nickArea.getText();
                     startGame();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
@@ -52,9 +78,19 @@ public class Window extends JFrame {
                 }
             }
         });
-
+        loginPanel.add(ipArea);
         loginPanel.add(joinGame);
-        add(loginPanel);
+        loginPanel.add(nickArea);
+
+        loginMainPanel.add(loginPanel);
+        loginMainPanel.validate();
+        loginMainPanel.repaint();
+
+        add(loginMainPanel);
+        validate();
+        repaint();
+
+        //TODO polish login panel
     }
 
     private void startGame() throws IOException, ClassNotFoundException {
@@ -80,7 +116,7 @@ public class Window extends JFrame {
         drawControlPanel.setBackground(grey);
         drawControlPanel.setVisible(true);
 
-        gameHandler = new GameHandler(ip, slidePanel, chatPanel,drawPanel);
+        gameHandler = new GameHandler(ip, slidePanel, chatPanel,drawPanel, nickName);
         chatPanel.setGameHandler(gameHandler);
         drawPanel.setOut(gameHandler.getOut());
 

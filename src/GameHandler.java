@@ -14,12 +14,12 @@ public class GameHandler implements Runnable {
     private ArrayList<String> chatMessages = new ArrayList<>();
     private ArrayList<Player> players = new ArrayList<>();
 
-    public GameHandler(String ip, SlidePanel slidePanel, ChatPanel chatPanel, DrawPanel drawPanel) throws IOException, ClassNotFoundException {
+    public GameHandler(String ip, SlidePanel slidePanel, ChatPanel chatPanel, DrawPanel drawPanel,String nickName) throws IOException, ClassNotFoundException {
         this.ip = ip;
         this.slidePanel = slidePanel;
         this.chatPanel = chatPanel;
         this.drawPanel = drawPanel;
-        createPlayer();
+        createPlayer(nickName);
         setupServerConnection();
         sendJoiningPing();
         new Thread(this).start();
@@ -41,8 +41,8 @@ public class GameHandler implements Runnable {
         }
     }
 
-    private void createPlayer() {
-        player = new Player("Marcin");
+    private void createPlayer(String nickName) {
+        player = new Player(nickName);
     }
 
     private void sendJoiningPing() {
