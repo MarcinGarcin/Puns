@@ -20,7 +20,7 @@ public class DrawPanel extends JPanel {
     private boolean isEraser = false;
 
     public DrawPanel() {
-        image = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
+        image = new BufferedImage(1000,580, BufferedImage.TYPE_INT_ARGB);
         g2d = image.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(drawColor);

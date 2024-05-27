@@ -37,18 +37,18 @@ public class Window extends JFrame {
         loginMainPanel.setLayout(null);
         loginMainPanel.setVisible(true);
 
-        JPanel loginPanel = new JPanel();
+        RoundedPanel loginPanel = new RoundedPanel(30);
         loginPanel.setBackground(grey);
         loginPanel.setLayout(null);
         loginPanel.setVisible(true);
-        loginPanel.setBounds(width/2-200, height/2-300, 400, 400);
+        loginPanel.setBounds(width/2-200, height/2-200, 400, 400);
 
         JTextArea nickArea = new JTextArea("Nickname");
         nickArea.setEditable(true);
         nickArea.setBackground(darkerGrey);
         nickArea.setForeground(Color.WHITE);
         nickArea.setFont(new Font("Arial", Font.BOLD, 20));
-        nickArea.setBounds(100, 50, 200, 30);
+        nickArea.setBounds(100, 75, 200, 30);
         nickArea.setVisible(true);
 
 
@@ -57,11 +57,11 @@ public class Window extends JFrame {
         ipArea.setBackground(darkerGrey);
         ipArea.setForeground(Color.WHITE);
         ipArea.setFont(new Font("Arial", Font.BOLD, 20));
-        ipArea.setBounds(100, 100, 200, 30);
+        ipArea.setBounds(100, 125, 200, 30);
         ipArea.setVisible(true);
 
         JButton joinGame = new JButton("Join Game");
-        joinGame.setBounds(75, 150, 250, 50);
+        joinGame.setBounds(75, 175, 250, 50);
         joinGame.setVisible(true);
         joinGame.addActionListener(new ActionListener() {
             @Override

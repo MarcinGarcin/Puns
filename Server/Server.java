@@ -10,11 +10,12 @@ public class Server {
     public List<Player> playerList = new ArrayList<>();
     private List<String> words = List.of("Cat", "Dog", "House", "Car", "Tree", "Sun", "Star", "Moon", "Computer", "Phone");
     private String currentWord;
-    private int currentDrawerIndex = 0; // Dodanie indeksu rysującego gracza
+    private int currentDrawerIndex = 0;
 
     public void start(int port){
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Server started on port " + port);
+            System.out.println(serverSocket.getInetAddress());
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client connected: " + clientSocket);
@@ -35,9 +36,7 @@ public class Server {
                 Player player = playerList.get(i);
                 player.setDrawing(i == currentDrawerIndex);
                 clients.get(i).sendData(player);
-
-
-
+                
                 if (i == currentDrawerIndex) {
                     clients.get(i).sendData(new Message("Server", "You have to draw: " + currentWord));
                 } else {
